@@ -45,5 +45,20 @@ namespace Fundoo_Notes.Controllers
                 return this.BadRequest(new { success = false, message = $"Login Failed {e.Message}" });
             }
         }
+        [HttpPost("ForgotPassword")]
+        public ActionResult ForgotPassword(string Email)
+        {
+            try
+            {
+                bool result = this.userBL.ForgotPassword(Email);
+                if (result)
+                    return this.Ok(new { success = true, message = $"Email sent to the given Email Address" });
+                return this.BadRequest(new { success = false, message = $"Email does not exist" });
+            }
+            catch (Exception e)
+            {
+                return this.BadRequest(new { success = false, message = $"Password Reset Failed {e.Message}" });
+            }
+        }
     }
 }
