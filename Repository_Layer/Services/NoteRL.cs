@@ -44,6 +44,23 @@ namespace Repository_Layer.Services
             }
         }
 
+        public async Task DeleteNote(int UserID, int NoteID)
+        {
+            try
+            {
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note != null)
+                {
+                    fundoo.Remove(note);
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }
 
