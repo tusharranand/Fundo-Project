@@ -62,5 +62,50 @@ namespace Business_Layer.Services
             }
         }
 
+        public async Task ArchiveNote(int UserID, int NoteID)
+        {
+            try
+            {
+                await this.noteRL.ArchiveNote(UserID, NoteID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task PinNote(int UserID, int NoteID)
+        {
+            try
+            {
+                await this.noteRL.PinNote(UserID, NoteID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task Reminder(int UserID, int NoteID, DateTime ReminderDate)
+        {
+            try
+            {
+                await this.noteRL.Reminder(UserID, NoteID, ReminderDate);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task TrashNote(int UserID, int NoteID)
+        {
+            try
+            {
+                await this.noteRL.TrashNote(UserID, NoteID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

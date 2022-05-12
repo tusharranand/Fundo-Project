@@ -98,5 +98,81 @@ namespace Fundoo_Notes.Controllers
                 throw;
             }
         }
+        [Authorize]
+        [HttpPut("ArchiveNote/{NoteID}")]
+        public async Task<ActionResult> ArchiveNote(int NoteID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note == null)
+                    return this.BadRequest(new { success = false, message = "Sorry! This note does not exist." });
+                await this.noteBL.ArchiveNote(UserID, NoteID);
+                return this.Ok(new { success = true, message = "Archive Changed Successfully" });
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
+        }
+        [Authorize]
+        [HttpPut("PinNote/{NoteID}")]
+        public async Task<ActionResult> PinNote(int NoteID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note == null)
+                    return this.BadRequest(new { success = false, message = "Sorry! This note does not exist." });
+                await this.noteBL.PinNote(UserID, NoteID);
+                return this.Ok(new { success = true, message = "Pin Changed Successfully" });
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
+        }
+        [Authorize]
+        [HttpPut("Reminder/{NoteID}")]
+        public async Task<ActionResult> Reminder(int NoteID, DateTime ReminderDate)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note == null)
+                    return this.BadRequest(new { success = false, message = "Sorry! This note does not exist." });
+                await this.noteBL.Reminder(UserID, NoteID, ReminderDate);
+                return this.Ok(new { success = true, message = "Reminder Changed Successfully" });
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
+        }
+        [Authorize]
+        [HttpPut("TrashNote/{NoteID}")]
+        public async Task<ActionResult> TrashNote(int NoteID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note == null)
+                    return this.BadRequest(new { success = false, message = "Sorry! This note does not exist." });
+                await this.noteBL.TrashNote(UserID, NoteID);
+                return this.Ok(new { success = true, message = "Trash Changed Successfully" });
+            }
+            catch (Exception) 
+            { 
+                throw; 
+            }
+        }
     }
 }

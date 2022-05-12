@@ -91,6 +91,80 @@ namespace Repository_Layer.Services
                 throw;
             }        
         }
+        public bool Toggle(bool input)
+        {
+            if (input)
+                input = false;
+            else input = true;
+            return input;
+        }
+
+        public async Task ArchiveNote(int UserID, int NoteID)
+        {
+            try
+            {
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note != null)
+                {
+                    note.IsArchive = Toggle(note.IsArchive);
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task PinNote(int UserID, int NoteID)
+        {
+            try
+            {
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note != null)
+                {
+                    note.IsPin = Toggle(note.IsPin);
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task Reminder(int UserID, int NoteID, DateTime ReminderDate)
+        {
+            try
+            {
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note != null)
+                {
+                    note.IsReminder = Toggle(note.IsReminder);
+                    if (note.IsReminder == true)
+                        note.ReminderDate = ReminderDate;
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task TrashNote(int UserID, int NoteID)
+        {
+            try
+            {
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note != null)
+                {
+                    note.IsTrash= Toggle(note.IsTrash);
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
 
