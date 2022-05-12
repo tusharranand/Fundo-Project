@@ -19,6 +19,78 @@ namespace Repository_Layer.Migrations
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Repository_Layer.Entities.Label", b =>
+                {
+                    b.Property<int>("LabelID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("LabelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NoteID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("LabelID");
+
+                    b.HasIndex("NoteID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Label");
+                });
+
+            modelBuilder.Entity("Repository_Layer.Entities.Note", b =>
+                {
+                    b.Property<int>("NoteID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Colour")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsArchive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReminder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTrash")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifyDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("RegisterDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ReminderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("NoteID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Note");
+                });
+
             modelBuilder.Entity("Repository_Layer.Entities.User", b =>
                 {
                     b.Property<int>("UserID")
@@ -27,7 +99,7 @@ namespace Repository_Layer.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -43,7 +115,49 @@ namespace Repository_Layer.Migrations
 
                     b.HasKey("UserID");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("Repository_Layer.Entities.Label", b =>
+                {
+                    b.HasOne("Repository_Layer.Entities.Note", "note")
+                        .WithMany("Label")
+                        .HasForeignKey("NoteID");
+
+                    b.HasOne("Repository_Layer.Entities.User", "user")
+                        .WithMany("Label")
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("note");
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("Repository_Layer.Entities.Note", b =>
+                {
+                    b.HasOne("Repository_Layer.Entities.User", "user")
+                        .WithMany("Notes")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("Repository_Layer.Entities.Note", b =>
+                {
+                    b.Navigation("Label");
+                });
+
+            modelBuilder.Entity("Repository_Layer.Entities.User", b =>
+                {
+                    b.Navigation("Label");
+
+                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

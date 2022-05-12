@@ -1,4 +1,6 @@
-﻿using Common_Layer.Users;
+﻿using Common_Layer;
+using Common_Layer.Users;
+using Repository_Layer.Entities;
 using Repository_Layer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,30 @@ namespace Business_Layer.Services
             try
             {
                 return this.userRL.ForgotPassword(email);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public IEnumerable<User> GetAll()
+        {
+            try
+            {
+                return this.userRL.GetAll();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool ChangePassword(ChangePasswordModel newPassword, string Email)
+        {
+            try
+            {
+                return this.userRL.ChangePassword(newPassword, Email);
             }
             catch (Exception)
             {

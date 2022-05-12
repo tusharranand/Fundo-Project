@@ -1,4 +1,5 @@
-﻿using Common_Layer.Users;
+﻿using Common_Layer;
+using Common_Layer.Users;
 using Experimental.System.Messaging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -18,10 +19,12 @@ namespace Repository_Layer.Services
     {
         FundooDbContext fundoo;
         public IConfiguration Configuration { get; }
+        Encryption encryptDecrypt;
         public UserRL(FundooDbContext fundoo, IConfiguration configuration)
         {
             this.Configuration = configuration;
             this.fundoo = fundoo;
+            this.encryptDecrypt = new Encryption();
         }
         public void AddUser(UserPostModel user)
         {
@@ -32,7 +35,7 @@ namespace Repository_Layer.Services
                 userData.LastName = user.LastName;
                 userData.RegisterDate = DateTime.Now;
                 userData.Email = user.Email;
-                userData.Password = user.Password;
+                userData.Password = encryptDecrypt.EncryptString(user.Password);
 
                 fundoo.Add(userData);
                 fundoo.SaveChanges();
@@ -42,22 +45,26 @@ namespace Repository_Layer.Services
                 throw;
             }
         }
+        // Encrypt/decrypt https://www.c-sharpcorner.com/UploadFile/2b481f/encrypt-and-decrypt-text-in-web-api/
 
         public string LoginUser(string email, string password)
         {
             try
             {
-                var user = fundoo.User.FirstOrDefault(u => u.Email == email && u.Password == password);
+                var user = fundoo.User.FirstOrDefault(u => u.Email == email);
                 if (user == null)
                     return null;
-                return GenerateJWTToken(email, user.UserID);
+                string decryptedPass = encryptDecrypt.DecryptString(user.Password);
+                if (decryptedPass == password)
+                    return GenerateJWTToken(email, user.UserID);
+                throw new Exception("Incorrect Password");
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        private string GenerateJWTToken(string email, int userID)
+        private string GenerateJWTToken(string Email, int UserID)
         {
             //generate token
 
@@ -67,8 +74,8 @@ namespace Repository_Layer.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("email", email),
-                    new Claim("userID", userID.ToString())
+                    new Claim("Email", Email),
+                    new Claim("UserID", UserID.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
 
@@ -95,9 +102,9 @@ namespace Repository_Layer.Services
                 else FundooQ = MessageQueue.Create(@".\Private$\FundooQueue");
 
                 Message message= new Message();
-                message.Formatter = new BinaryMessageFormatter();
+                message.Formatter = new BinaryMessageFormatter();;
                 message.Body = GenerateJWTToken(email, user.UserID);
-                EmailService.SendMail(email, message.Body.ToString());
+                EmailService.SendMail(email, message.Body.ToString(), fundoo);
                 FundooQ.ReceiveCompleted += new ReceiveCompletedEventHandler(msmqQueue_ReceiveCompleted);
 
                 return true;
@@ -113,7 +120,7 @@ namespace Repository_Layer.Services
             {
                 MessageQueue queue = (MessageQueue)sender;
                 Message msg = queue.EndReceive(e.AsyncResult);
-                EmailService.SendMail(e.Message.ToString(), GenerateToken(e.Message.ToString()));
+                EmailService.SendMail(e.Message.ToString(), GenerateToken(e.Message.ToString()), fundoo);
                 queue.BeginReceive();
             }
             catch (MessageQueueException ex)
@@ -146,6 +153,39 @@ namespace Repository_Layer.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        public IEnumerable<User> GetAll()
+        {
+            try
+            {
+                foreach (var user in fundoo.User)
+                    user.Password = encryptDecrypt.DecryptString(user.Password);
+                return fundoo.User;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool ChangePassword(ChangePasswordModel newPassword, string Email)
+        {
+            try
+            {
+                var user = fundoo.User.FirstOrDefault(x => x.Email == Email);
+                if (newPassword.Password.Equals(newPassword.ConfirmPassword))
+                {
+                    var pass = encryptDecrypt.EncryptString(newPassword.Password);
+                    user.Password = pass.ToString();
+                    fundoo.SaveChanges();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

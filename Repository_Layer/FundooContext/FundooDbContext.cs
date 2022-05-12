@@ -8,12 +8,14 @@ namespace Repository_Layer.FundooContext
 {
     public class FundooDbContext : DbContext
     {
-        public FundooDbContext(DbContextOptions options)
-            : base(options)
+        public FundooDbContext(DbContextOptions options) : base(options)
         {
 
         }
-
         public DbSet<User> User { get; set; }
+        protected override void OnModelCreating(ModelBuilder model)
+        {
+            model.Entity<User>().HasIndex(u => u.Email).IsUnique();
+        }
     }
 }
