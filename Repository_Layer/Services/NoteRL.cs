@@ -74,6 +74,23 @@ namespace Repository_Layer.Services
                 throw;
             }
         }
+
+        public async Task ChangeColour(int UserID, int NoteID, string Colour)
+        {
+            try
+            {
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if(note != null)
+                {
+                    note.Colour = Colour;
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }        
+        }
     }
 }
 

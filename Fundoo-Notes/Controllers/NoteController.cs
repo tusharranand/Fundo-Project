@@ -79,5 +79,24 @@ namespace Fundoo_Notes.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPut("ChangeColour/{NoteID}/{Colour}")]
+        public async Task<ActionResult> ChangeColour(int NoteID, string Colour)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var note = fundoo.Note.FirstOrDefault(x => x.UserID == UserID && x.NoteID == NoteID);
+                if (note == null)
+                    return this.BadRequest(new { success = false, message = "Sorry! This note does not exist." });
+                await this.noteBL.ChangeColour(UserID, NoteID, Colour);
+                return this.Ok(new { success = true, message = "Colour Changed Successfully" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

@@ -50,6 +50,17 @@ namespace Business_Layer.Services
                 throw;
             }
         }
+        public async Task ChangeColour(int UserID, int NoteID, string Colour)
+        {
+            try
+            {
+                await this.noteRL.ChangeColour(UserID, NoteID, Colour);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
     }
 }
