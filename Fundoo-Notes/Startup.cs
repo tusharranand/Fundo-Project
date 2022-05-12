@@ -1,3 +1,4 @@
+using Business_Layer.Interfaces;
 using Business_Layer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -38,6 +39,8 @@ namespace Fundoo_Notes
             services.AddDbContext<FundooDbContext>(opts => opts.UseSqlServer(Configuration["ConnectionStrings:FundooNotesKey"]));
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
+            services.AddTransient<INoteBL, NoteBL>();
+            services.AddTransient<INoteRL, NoteRL>();
             services.AddSwaggerGen(setup =>
             {
                 // Include 'SecurityScheme' to use JWT Authentication
