@@ -61,19 +61,6 @@ namespace Repository_Layer.Services
             }
         }
 
-        public async Task<List<Note>> GetAll(int UserID)
-        {
-            try
-            {
-                List<Note> list = new List<Note>();
-                list = await fundoo.Note.Include(u => u.user).ToListAsync();
-                return list;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
 
         public async Task ChangeColour(int UserID, int NoteID, string Colour)
         {
@@ -90,6 +77,19 @@ namespace Repository_Layer.Services
             {
                 throw;
             }        
+        }
+        public async Task<List<Note>> GetAll(int UserID)
+        {
+            try
+            {
+                List<Note> list = new List<Note>();
+                list = await fundoo.Note.Include(u => u.user).ToListAsync();
+                return list;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
         public bool Toggle(bool input)
         {
@@ -140,7 +140,9 @@ namespace Repository_Layer.Services
                 {
                     note.IsReminder = Toggle(note.IsReminder);
                     if (note.IsReminder == true)
+                    {
                         note.ReminderDate = ReminderDate;
+                    }
                     await fundoo.SaveChangesAsync();
                 }
             }

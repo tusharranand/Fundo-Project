@@ -7,6 +7,7 @@ namespace Business_Layer.Interfaces
 {
     public interface ILabelBL
     {
+        Task AddLabel(int UserID, int NoteID, string LabelName);
 
     }
 }

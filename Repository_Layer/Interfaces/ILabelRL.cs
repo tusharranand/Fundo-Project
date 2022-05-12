@@ -7,5 +7,6 @@ namespace Repository_Layer.Interfaces
 {
     public interface ILabelRL
     {
+        Task AddLabel(int UserID, int NoteID, string LabelName);
     }
 }
