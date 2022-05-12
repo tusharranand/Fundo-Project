@@ -61,5 +61,23 @@ namespace Fundoo_Notes.Controllers
                 throw;
             }
         }
+
+        [Authorize]
+        [HttpGet("GetAllNotes")]
+        public async Task<ActionResult> GetAll()
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                List<Note> notes = await this.noteBL.GetAll(UserID);
+                return this.Ok(new { success = true, message = "These notes are:", data = notes });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }
