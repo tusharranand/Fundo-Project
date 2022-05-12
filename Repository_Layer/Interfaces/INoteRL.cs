@@ -9,6 +9,7 @@ namespace Repository_Layer.Interfaces
 {
     public interface INoteRL
     {
+        Task AddNote(int UserID, NotePostModel note);
 
     }
 }

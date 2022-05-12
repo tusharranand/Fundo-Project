@@ -11,6 +11,21 @@ namespace Business_Layer.Services
 {
     public class NoteBL : INoteBL
     {
-
+        INoteRL noteRL;
+        public NoteBL(INoteRL noteRL)
+        {
+            this.noteRL = noteRL;
+        }
+        public async Task AddNote(int UserID, NotePostModel note)
+        {
+            try
+            {
+                await this.noteRL.AddNote(UserID, note);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
