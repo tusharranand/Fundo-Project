@@ -17,5 +17,6 @@ namespace Business_Layer.Interfaces
         Task PinNote(int UserID, int NoteID);
         Task Reminder(int UserID, int NoteID, DateTime ReminderDate);
         Task TrashNote(int UserID, int NoteID);
+        Task<Note> UpdateNote(int UserID, int NoteID, NoteUpdateModel updateNote);
     }
 }
