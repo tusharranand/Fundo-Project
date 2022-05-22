@@ -26,7 +26,7 @@ namespace Repository_Layer.Entities
 
         public int UserID { get; set; }
         public virtual User user { get; set; }
-        public virtual IList<Label> Label { get; set; }
+        //public virtual IList<Label> Label { get; set; }
 
     }
 }

@@ -12,6 +12,7 @@ namespace Business_Layer.Interfaces
         Task AddNote(int UserID, NotePostModel note);
         Task DeleteNote(int UserID, int NoteID);
         Task<List<Note>> GetAll(int UserID);
+        Task<Note> GetNote(int UserID, int NoteID);
         Task ChangeColour(int UserID, int NoteID, string Colour);
         Task ArchiveNote(int UserID, int NoteID);
         Task PinNote(int UserID, int NoteID);

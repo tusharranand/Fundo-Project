@@ -1,6 +1,7 @@
 ﻿using Common_Layer;
 using Common_Layer.Users;
 using Experimental.System.Messaging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Repository_Layer.Entities;
@@ -106,7 +107,8 @@ namespace Repository_Layer.Services
                 message.Body = GenerateJWTToken(email, user.UserID);
                 EmailService.SendMail(email, message.Body.ToString(), fundoo);
                 FundooQ.ReceiveCompleted += new ReceiveCompletedEventHandler(msmqQueue_ReceiveCompleted);
-
+                FundooQ.BeginReceive();
+                FundooQ.Close();
                 return true;
             }
             catch (Exception)

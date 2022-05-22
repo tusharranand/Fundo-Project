@@ -2,11 +2,15 @@
 using Common_Layer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using Repository_Layer.Entities;
 using Repository_Layer.FundooContext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Fundoo_Notes.Controllers
@@ -17,11 +21,15 @@ namespace Fundoo_Notes.Controllers
     {
         FundooDbContext fundoo;
         INoteBL noteBL;
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
 
-        public NoteController(FundooDbContext fundoo, INoteBL noteBL)
+        public NoteController(FundooDbContext fundoo, INoteBL noteBL, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.fundoo = fundoo;
             this.noteBL = noteBL;
+            this.memoryCache = memoryCache;
+            this.distributedCache = distributedCache;
         }
 
         [Authorize]
@@ -63,8 +71,8 @@ namespace Fundoo_Notes.Controllers
         }
 
         [Authorize]
-        [HttpGet("GetAllNotes")]
-        public async Task<ActionResult> GetAll()
+        [HttpGet("GetAllNotesForAUser")]
+        public async Task<ActionResult> GetAllNotes()
         {
             try
             {
@@ -78,7 +86,22 @@ namespace Fundoo_Notes.Controllers
                 throw;
             }
         }
-
+        [Authorize]
+        [HttpGet("GetAParticularNote/{NoteID}")]
+        public async Task<ActionResult> GetNote(int NoteID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                Note note = await this.noteBL.GetNote(UserID, NoteID);
+                return this.Ok(new { success = true, message = "Required note is:", data = note });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         [Authorize]
         [HttpPut("ChangeColour/{NoteID}/{Colour}")]
         public async Task<ActionResult> ChangeColour(int NoteID, string Colour)

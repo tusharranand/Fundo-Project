@@ -1,4 +1,5 @@
 ﻿using Business_Layer.Interfaces;
+using Repository_Layer.Entities;
 using Repository_Layer.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,5 +26,18 @@ namespace Business_Layer.Services
                 throw;
             }
         }
+
+        public async Task<List<Label>> GetAllLabels(int UserID)
+        {
+            try
+            {
+                return await this.labelRL.GetAllLabels(UserID);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

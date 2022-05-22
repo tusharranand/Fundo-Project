@@ -119,5 +119,16 @@ namespace Business_Layer.Services
             }
         }
 
+        public Task<Note> GetNote(int UserID, int NoteID)
+        {
+            try
+            {
+                return this.noteRL.GetNote(UserID, NoteID); 
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
