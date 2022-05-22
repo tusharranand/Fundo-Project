@@ -53,5 +53,23 @@ namespace Repository_Layer.Services
             }
         }
 
+        public async Task<List<Label>> GetAllLabelsForANote(int UserID, int NoteID)
+        {
+            try
+            {
+                var label = fundoo.Label.FirstOrDefaultAsync(u => u.UserID == UserID && u.NoteID == NoteID);
+                if (label != null)
+                {
+                    List<Label> labels = await fundoo.Label.Where(u => u.UserID == UserID && u.NoteID == NoteID).Include(n => n.note).Include(u => u.user).ToListAsync();
+                    return labels;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

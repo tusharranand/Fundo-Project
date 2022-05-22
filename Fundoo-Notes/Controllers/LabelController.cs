@@ -58,6 +58,25 @@ namespace Fundoo_Notes.Controllers
                 throw;
             }
         }
-        
+        [Authorize]
+        [HttpGet("GetAllLabelsForANote/{NoteID}")]
+        public async Task<ActionResult> GetAllLabelsForANote(int NoteID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                var note = fundoo.Note.FirstOrDefaultAsync(u => u.UserID == UserID && u.NoteID == NoteID);
+                List<Label> list = new List<Label>();
+                list = await this.labelBL.GetAllLabelsForANote(UserID, NoteID);
+                if(list.Count==0)
+                    return this.BadRequest(new { success = false, message = "No labels are availale for this note" });
+                return this.Ok(new { success = true, message = "All added Labels for given note ID are,", data = list });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

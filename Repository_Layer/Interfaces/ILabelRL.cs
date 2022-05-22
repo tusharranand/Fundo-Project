@@ -10,7 +10,7 @@ namespace Repository_Layer.Interfaces
     {
         Task AddLabel(int UserID, int NoteID, string LabelName);
         Task<List<Label>> GetAllLabels(int UserID);
-        
+        Task<List<Label>> GetAllLabelsForANote(int UserID, int NoteID);
 
     }
 }
