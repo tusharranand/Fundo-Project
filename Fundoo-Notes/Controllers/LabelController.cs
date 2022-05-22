@@ -94,5 +94,21 @@ namespace Fundoo_Notes.Controllers
                 throw;
             }
         }
+        [Authorize]
+        [HttpPut("UpdateNote/{LabelID}/{LabelName}/{NoteID}")]
+        public async Task<ActionResult> UpdateNote(int LabelID, string LabelName, int NoteID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                await this.labelBL.UpdateLabel(UserID, LabelID, LabelName, NoteID);
+                return this.Ok(new { success = true, message = "The label was updated." });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
