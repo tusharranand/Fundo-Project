@@ -71,5 +71,22 @@ namespace Repository_Layer.Services
             }
         }
 
+        public async Task DeleteLabel(int UserID, int LabelID)
+        {
+            try
+            {
+                var label = fundoo.Label.FirstOrDefault(u => u.UserID == UserID && u.LabelID == LabelID);
+                if (label != null)
+                {
+                    fundoo.Label.Remove(label);
+                    await fundoo.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

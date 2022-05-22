@@ -78,5 +78,21 @@ namespace Fundoo_Notes.Controllers
                 throw;
             }
         }
+        [Authorize]
+        [HttpDelete("DeleteLabel/{LabelID}")]
+        public async Task<ActionResult> DeleteLabel(int LabelID)
+        {
+            try
+            {
+                var userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserID", StringComparison.InvariantCultureIgnoreCase));
+                int UserID = Int32.Parse(userid.Value);
+                await this.labelBL.DeleteLabel(UserID, LabelID);
+                return this.Ok(new { success = true, message = "The label was deleted."});
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
